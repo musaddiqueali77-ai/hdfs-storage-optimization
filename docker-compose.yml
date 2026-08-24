@@ -1,0 +1,61 @@
+version: "3"
+
+# Local HDFS cluster: 1 NameNode + 2 DataNodes.
+# Two DataNodes is a deliberate choice -- it's enough to demonstrate real
+# replication behavior (factor 2 fully replicates; factor 3 under-replicates,
+# which is part of the justification for choosing 2 in this project).
+#
+# Image: bde2020/hadoop-* (Hadoop 3.2.1). Chosen over Bitnami's Hadoop image
+# for the same reason the Kafka project moved off Bitnami -- these tags are
+# free on Docker Hub with no paywall, and they're the most widely-used
+# community reference images for a local HDFS cluster.
+
+services:
+  namenode:
+    image: bde2020/hadoop-namenode:2.0.0-hadoop3.2.1-java8
+    container_name: namenode
+    restart: always
+    ports:
+      - "9870:9870"   # NameNode web UI
+      - "9000:9000"   # HDFS RPC (fs.defaultFS)
+    volumes:
+      - hadoop_namenode:/hadoop/dfs/name
+    environment:
+      - CLUSTER_NAME=retail-hdfs
+    env_file:
+      - ./hadoop.env
+
+  datanode1:
+    image: bde2020/hadoop-datanode:2.0.0-hadoop3.2.1-java8
+    container_name: datanode1
+    restart: always
+    volumes:
+      - hadoop_datanode1:/hadoop/dfs/data
+    environment:
+      - SERVICE_PRECONDITION=namenode:9870
+    env_file:
+      - ./hadoop.env
+    ports:
+      - "9864:9864"   # DataNode web UI
+    depends_on:
+      - namenode
+
+  datanode2:
+    image: bde2020/hadoop-datanode:2.0.0-hadoop3.2.1-java8
+    container_name: datanode2
+    restart: always
+    volumes:
+      - hadoop_datanode2:/hadoop/dfs/data
+    environment:
+      - SERVICE_PRECONDITION=namenode:9870
+    env_file:
+      - ./hadoop.env
+    ports:
+      - "9865:9864"   # DataNode web UI (mapped to a different host port)
+    depends_on:
+      - namenode
+
+volumes:
+  hadoop_namenode:
+  hadoop_datanode1:
+  hadoop_datanode2:
