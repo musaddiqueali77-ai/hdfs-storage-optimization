@@ -1,0 +1,15 @@
+# Generated sample data — large and fully regenerable via generate_sales_data.py
+sample_data/
+
+# Python
+data-generator/venv/
+__pycache__/
+*.pyc
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Editor / local tool state (not project config worth sharing)
+.vscode/
+.cursor/
