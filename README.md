@@ -10,12 +10,13 @@ Engineering training portfolio.
 - [x] Design decisions finalized (directory hierarchy, block size, replication factor)
 - [x] Docker Compose HDFS cluster defined (1 NameNode + 2 DataNodes)
 - [x] Sample data generator built
-- [ ] Cluster verified running (2/2 live DataNodes)
-- [ ] Sample data generated
-- [ ] HDFS directories created
-- [ ] Files uploaded with custom block size + replication
-- [ ] Storage metrics verified (`du -h`, `fsck`, NameNode UI screenshots)
-- [ ] Cloud translation writeup (Databricks Free Edition / Microsoft Fabric)
+- [x] Cluster verified running (3/3 containers up, 2/2 live DataNodes)
+- [x] Sample data generated (16 files: 15 regular + 1 peak-day)
+- [x] NameNode UI screenshot captured as evidence
+- [x] HDFS directories created
+- [x] Files uploaded with custom block size + replication
+- [x] Storage metrics verified (`du -h`, `fsck`, NameNode UI screenshots)
+- [] Cloud translation writeup (Databricks Free Edition / Microsoft Fabric)
 
 *(This checklist is the source of truth for what's actually done — update it as
 each phase is verified, not before.)*
@@ -48,9 +49,11 @@ hdfs-storage-optimization/
 │   └── generate_sales_data.py
 ├── sample_data/            # generated locally, gitignored
 ├── docs/
-│   └── screenshots/        # NameNode UI evidence
+│   └── screenshots/        # NameNode UI / fsck evidence -- not created yet, see Setup
 └── README.md
 ```
+
+> `docs/screenshots/` doesn't exist locally yet — it's created in Setup below, right before it's needed for evidence capture.
 
 ## Setup
 
@@ -67,6 +70,15 @@ python -m venv venv
 venv\Scripts\activate
 pip install faker
 python generate_sales_data.py
+```
+
+Creates 16 CSVs under `sample_data\` (5 stores × 3 days at ~5 MB, plus one ~150 MB peak-day file on 2026-08-04).
+
+Before Phase 2 evidence capture, create the screenshots folder (not present by default):
+
+```powershell
+cd ..
+mkdir docs\screenshots
 ```
 
 ## Design Decisions
